@@ -24,7 +24,7 @@
 
 ;;; Code:
 (require 'cl-lib)
-(require 'ctbl)
+(require 'ctable)
 (require 'transient)
 
 (defcustom eui-plugins nil
