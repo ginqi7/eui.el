@@ -24,6 +24,8 @@
 
 ;;; Code:
 
+(require 'eui)
+
 (defcustom eui-switchaudio-osx-command (executable-find "SwitchAudioSource")
   "Specifies the custom variable for the path to the SwitchAudioSource executable used by the switchaudio-osx package. It uses executable-find to locate the command in the system PATH.")
 

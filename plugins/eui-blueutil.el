@@ -23,6 +23,7 @@
 ;;
 
 ;;; Code:
+(require 'eui)
 
 (defcustom eui-blueutil-command (executable-find "blueutil")
   "Specifies the executable path for the blueutil command-line utility used to manage Bluetooth on macOS.")

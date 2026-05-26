@@ -23,6 +23,7 @@
 ;;
 
 ;;; Code:
+(require 'eui)
 
 (defcustom eui-mijia-command "uvx mijiaAPI"
   "Customizable variable that specifies the shell command used to invoke the Mijia API.")

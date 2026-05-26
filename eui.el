@@ -23,6 +23,9 @@
 ;;
 
 ;;; Code:
+(require 'cl-lib)
+(require 'ctbl)
+(require 'transient)
 
 (defcustom eui-plugins nil
   "List of plugin definitions to be included in the main EUI transient menu.")
