@@ -17,12 +17,17 @@
 + add the path to 'load-path'
   #+BEGIN_SRC emacs-lisp
     (add-to-list 'load-path "~/.emacs.d/lisp/eui")
+    (add-to-list 'load-path "~/.emacs.d/lisp/eui/plugins")
   #+END_SRC
 
 * Configuration
 Here are a few variables that can be used for configuration:
 #+BEGIN_SRC emacs-lisp
   (require 'eui)
+  (require 'eui-blueutil)
+  ;; Optional
+  (require 'eui-mijia)
+  (require 'eui-switchaudio-osx)
 #+end_src
 
 ** Variables

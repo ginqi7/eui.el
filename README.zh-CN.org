@@ -17,12 +17,16 @@
 + 把克隆的路径添加到 =load-path= 当中
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'load-path "~/.emacs.d/lisp/eui")
+  (add-to-list 'load-path "~/.emacs.d/lisp/eui/plugins")
 #+END_SRC
 
 * 配置
 
 #+BEGIN_SRC emacs-lisp
   (require 'eui)
+  ;; Optional
+  (require 'eui-mijia)
+  (require 'eui-switchaudio-osx)
 #+end_src
 
 ** 变量
