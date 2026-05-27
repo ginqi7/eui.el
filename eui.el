@@ -29,6 +29,13 @@
 
 (defcustom eui-plugins nil
   "List of plugin definitions to be included in the main EUI transient menu.")
+
+(defcustom eui-yq-command (executable-find "yq")
+  "Specifies the executable path for the yq command-line utility used for processing YAML and other structured data formats.")
+
+(defcustom eui-jq-command (executable-find "jq")
+  "Specifies the executable path for the jq command-line utility used for processing and querying JSON data.")
+
 ;;; Internal Functions
 (defun eui-select--join-values (keys hash-table)
   (string-join (mapcar (lambda (key) (format "%s" (gethash key hash-table))) keys) " : "))

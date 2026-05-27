@@ -30,7 +30,7 @@
 
 (defun eui-mijia-command (type)
   "Generates a shell command string to retrieve and format Mijia device information. It takes a command flag as the type argument, applies a sed transformation to prefix list items with a name key to ensure YAML compatibility, and pipes the output to yq for conversion into JSON format."
-  (format "%s %s | sed 's/^  - \\(.*\\)/  - name: \\1/' | yq -o=json" eui-mijia-command type))
+  (format "%s %s | sed 's/^  - \\(.*\\)/  - name: \\1/' | %s -o=json" eui-mijia-command type eui-yq-command))
 
 (defun eui-mijia-parser (str)
   "Parses a JSON string into a hash table and extracts the value associated with its first top-level key. This is typically used to unwrap the device list array from the root object produced by the formatted command output."

@@ -32,7 +32,7 @@
 (defvar eui-switchaudio-osx-list-template "sh -c '%s -a -f json; %s -c -f json; %s -c -f json -t input'"
   "A shell command template string used to retrieve a comprehensive list of macOS audio devices, including the current output and input status, formatted as JSON.")
 
-(defvar eui-switchaudio-osx-list-jq-template "jq -s '.[-2:] as $curr | .[0:-2] | map(. as $item | .active = (any($curr[]; .uid == $item.uid and .type == $item.type)))'"
+(defvar eui-switchaudio-osx-list-jq-template "%s -s '.[-2:] as $curr | .[0:-2] | map(. as $item | .active = (any($curr[]; .uid == $item.uid and .type == $item.type)))'"
   "A jq command template string used to process JSON-formatted audio device data, marking devices as active if their unique identifiers and types match the currently selected input or output devices.")
 
 (defun eui-switchaudio-osx-list-command ()
@@ -40,7 +40,7 @@
   (format "%s | %s"
           (format eui-switchaudio-osx-list-template
                   eui-switchaudio-osx-command eui-switchaudio-osx-command eui-switchaudio-osx-command)
-          eui-switchaudio-osx-list-jq-template))
+          (format eui-switchaudio-osx-list-jq-template eui-jq-command)))
 
 (defun eui-switchaudio-osx-list-devices ()
   "Displays a list of macOS audio devices in an EUI table buffer by synchronously executing the configured system command."
