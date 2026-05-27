@@ -35,7 +35,7 @@
 
 (defun eui--json-parser (str)
   "Parse the JSON string STR and return a Lisp object with arrays represented as lists."
-  (json-parse-string str :array-type 'list))
+  (json-parse-string str :array-type 'list :false-object nil))
 ;;; Public APIs
 (cl-defun eui-run (command callback async))
 

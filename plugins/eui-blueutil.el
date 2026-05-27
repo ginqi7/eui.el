@@ -28,8 +28,25 @@
 (defcustom eui-blueutil-command (executable-find "blueutil")
   "Specifies the executable path for the blueutil command-line utility used to manage Bluetooth on macOS.")
 
+(defun eui-blueutil-toggle (hash)
+  "Toggle the connection status of a Bluetooth device identified by the properties in HASH. It checks the \"connected\" key to determine whether to connect or disconnect the device using its \"address\". The command is executed synchronously and provides a notification upon completion."
+  (eui-run-sync
+   :command (format "%s --%s %s"
+                    eui-blueutil-command
+                    (if (gethash "connected" hash) "disconnect" "connect")
+                    (gethash "address" hash))
+   :parser (apply-partially #'eui-notify "EUI Blue Util")))
+
 (defun eui-blueutil-select ()
-  (interactive))
+  "Interactively select a paired Bluetooth device from a list to toggle its connection. The function retrieves paired devices in JSON format using the blueutil command, displays their name and connection status for user selection, and executes the toggle action on the selected device."
+  (interactive)
+  (eui-select
+   :prompt "Select a Device: "
+   :hash-table
+   (eui-run-sync
+    :command (format "%s --paired --format json" eui-blueutil-command))
+   :keys '("name" "connected")
+   :callback #'eui-blueutil-toggle))
 
 (defun eui-blueutil-list-all ()
   "Interactively displays a table in a dedicated buffer listing all paired Bluetooth devices with their name, connection status, and MAC address."
