@@ -43,6 +43,22 @@
 (defun eui--json-parser (str)
   "Parse the JSON string STR and return a Lisp object with arrays represented as lists."
   (json-parse-string str :array-type 'list :false-object nil))
+
+(defun eui--process-sentinel (process event)
+  "Sentinel function that handles the termination of a process and executes associated callbacks.
+
+If the EVENT indicates the process has finished successfully, the function switches to the process buffer and retrieves its content. It then sequentially applies each function in the CALLBACKS list to the output, passing the result of each callback as the input to the next. If KEEP-BUFFER-P was not specified as non-nil, the process buffer and its associated window are killed upon completion."
+  (let* ((plist (process-plist process))
+         (callbacks (plist-get plist 'callbacks))
+         (keep-buffer-p (plist-get plist 'keep-buffer-p)))
+    (when (string= event "finished\n")
+      (with-current-buffer (process-buffer process)
+        (when callbacks
+          (setq arg (buffer-substring-no-properties (point-min) (point-max)))
+          (dolist (callback callbacks)
+            (setq arg (funcall callback arg))))
+        (unless keep-buffer-p (kill-buffer-and-window))))))
+
 ;;; Public APIs
 (cl-defun eui-run (command callback async))
 
@@ -52,10 +68,24 @@
         (json-str (shell-command-to-string command)))
     (funcall parser json-str)))
 
-(defun eui-run-asyc (&key command callback)
-  "Execute COMMAND synchronously and return the parsed JSON output as a list. Note that the CALLBACK argument is currently unused."
-  (let ((json-str (shell-command-to-string command)))
-    (json-parse-string json-str :array 'list)))
+(cl-defun eui-run-asyc (&key command callbacks keep-buffer-p)
+  "Run COMMAND asynchronously and manage its execution through CALLBACKS.
+
+COMMAND is a string specifying the shell command to run.
+CALLBACKS is a list of functions or data to be handled by the sentinel when the process state changes.
+KEEP-BUFFER-P is a flag that, when non-nil, prevents the output buffer from being automatically removed.
+
+This function creates dedicated output and error buffers, initiates the asynchronous process, and stores the configuration parameters in the process property list for the sentinel eui--process-sentinel to access."
+  (let ((buff-name (format "*eui-%s*" (md5 command)))
+        (buff-err-name (format "*eui-err-%s*" (md5 command)))
+        (proc))
+    (async-shell-command command buff-name buff-err-name)
+    (setq proc (get-buffer-process buff-name))
+    (set-process-plist proc
+                       (list
+                        'keep-buffer-p keep-buffer-p
+                        'callbacks callbacks))
+    (set-process-sentinel proc #'eui--process-sentinel)))
 
 (cl-defun eui-table (&key header keys buffer hash-table)
   "Create and display a table in BUFFER using the data from HASH-TABLE. KEYS specifies the columns to display; if nil, keys are extracted from the first entry of HASH-TABLE. The function renders the table using the ctbl library and clears the buffer before drawing."
